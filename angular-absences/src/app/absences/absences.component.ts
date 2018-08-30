@@ -2,8 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { AbsenceService } from '../absence.service';
 import { Absence } from '../absence';
 import { FormGroup, FormBuilder } from '@angular/forms';
-import { Observable, from} from 'rxjs';
-import { forEach } from '@angular/router/src/utils/collection';
 
 @Component({
   selector: 'app-absences',
@@ -16,13 +14,16 @@ export class AbsencesComponent implements OnInit {
   filterByReasonForm: FormGroup;
   absences: Absence[];
   absencesLocal: Absence[];
-  choices: string[] = ['Order by Nothing','Order by Emission date','Order by Start Date'];
+  choices: string[] = ['Order by Emission date','Order by Start Date'];
   reasons: string[] = ['','PaidVacation','RTT','SickChild','LeaveFamilyEvents'];
-  choiceTemp: string = 'Order by Nothing';
+  choiceTemp: string = '';
   reasonTemp: string = '';
   count: number = 0; //To avoid an infinite loop
+  condition: number = 0;
 
-  constructor(private absenceService: AbsenceService, private fb: FormBuilder) { }
+  constructor(private absenceService: AbsenceService, private fb: FormBuilder) { 
+
+  }
   
   ngOnInit() {
     this.choiceForm = this.fb.group({
@@ -34,54 +35,75 @@ export class AbsencesComponent implements OnInit {
 
   onChange(choiceVal: string):void {
     this.count += 1;
-    if(choiceVal == 'Order by Nothing'){
-      this.choiceTemp = choiceVal;
-      this.getAbsences();
-    }
-    else if(choiceVal == 'Order by Emission date'){
+    console.log('count:' + this.count);
+    // if(choiceVal == 'Order by Nothing'){
+    //   console.log("Order by Nothing");
+
+    //   this.choiceTemp = choiceVal;
+    //   this.getAbsences();
+    // }
+    // else 
+    if(choiceVal == 'Order by Emission date'){
+      console.log("Order by Emission date");
+      console.log('condition:' + this.condition);
       this.choiceTemp = choiceVal;
       this.sortByEmissionDate();
     }    
     else if(choiceVal == 'Order by Start Date'){
+      console.log("Order by Start Date");
+      console.log('condition:' + this.condition);
       this.choiceTemp = choiceVal;
       this.sortByStartDate();
     }
 
     if(this.count < 2)
     {
+      this.condition = 1;
       this.filterChange(this.reasonTemp);
     }
     else{
       this.count = 0;
+      console.log('count:' + this.count);
+
     }
 
   }
   
   filterChange(reasonVal: string):void {
     this.count += 1;
+    console.log('count:' + this.count);
     
     this.reasonTemp = reasonVal;
     if (reasonVal != '')
     {
-      this.absenceService.filterByReason(reasonVal).subscribe(abs => this.absences = abs);
+    console.log('condition:' + this.condition);
+    console.log('filterChange() != ""');
+    this.absenceService.filterByReason(reasonVal).subscribe(abs => this.absences = abs);
 
     }
     else
     {
-      this.getAbsences();
+    console.log('condition:' + this.condition);
+    console.log('filterChange() == ""');
+    this.getAbsences();
     }
 
     if(this.count < 2)
     {
+      this.condition = 1;
       this.onChange(this.choiceTemp);
     }
     else{
       this.count =0;
+      console.log('count:' + this.count);
+
     }
     
   }
 
   getAbsences(): void {
+    console.log('condition:' + this.condition);
+    console.log("<<<<<<<<<<<<<<<<<<<<<<getAbsences()");
     this.absenceService.getAbsences().subscribe(abs=> this.absences = abs);
     this.absencesLocal = this.absences;
   }

@@ -20,7 +20,16 @@
       <th>Status</th>
     </tr>
   </thead>
-  <tbody>
+  <tbody *ngIf="condition == 0">
+    <tr *ngFor="let absence of absences"> 
+      <td>{{ absence.emissionDate | date:'shortDate'}}</td>
+      <td>{{ absence.reason}}</td>
+      <td>{{ absence.startDate | date:'shortDate'}}</td>
+      <td>{{ absence.endDate | date:'shortDate'}}</td>
+      <td>{{ absence.status }}</td>
+    </tr>
+  </tbody>
+  <tbody *ngIf="condition == 1">
     <tr *ngFor="let absence of absencesLocal"> 
       <td>{{ absence.emissionDate | date:'shortDate'}}</td>
       <td>{{ absence.reason}}</td>
