@@ -36,7 +36,8 @@ namespace Demandes_Absences.Controllers
         [HttpGet("FilterByReason")]
         public List<Absence> FilterByReason(string reason)
         {
-            return bo.FilterByReason(reason).ToList();
+            var a = bo.FilterByReason(reason).ToList();
+            return a;
         }
 
         [HttpGet("[action]")]
